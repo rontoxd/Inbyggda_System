@@ -1,0 +1,18 @@
+{
+    "C_Cpp.intelliSenseEngine": "default",
+    "idf.espIdfPathWin": "c:\\Repos\\v5.4\\esp-idf",
+    "idf.pythonInstallPath": "C:\\Users\\ronto\\.espressif\\tools\\idf-python\\3.11.2\\python.exe",
+    "idf.openOcdConfigs": [
+        "board/esp32c6-ftdi.cfg"
+    ],
+    "idf.toolsPathWin": "C:\\Users\\ronto\\.espressif",
+    "idf.customExtraVars": {
+        "IDF_TARGET": "esp32c6"
+    },
+    "idf.portWin": "COM9",
+    "idf.flashType": "UART",
+    "files.associations": {
+        "button.h": "c",
+        "potentiometer.h": "c"
+    }
+}
