@@ -7,9 +7,9 @@
 #include "Potentiometer.h"
 
 #define BUTTON_GPIO GPIO_NUM_20  // byt till rätt pin
-#define POTENTIOMETER_GPIO ADC_CHANNEL_0 // byt till rätt ADC-kanal
+#define POTENTIOMETER_GPIO ADC_CHANNEL_4 // byt till rätt ADC-kanal
 #define POTENTIOMETER_UNIT ADC_UNIT_1
-#define POTENTIOMETER_ATTEN ADC_ATTEN_DB_11
+#define POTENTIOMETER_ATTEN ADC_ATTEN_DB_12
 #define POTENTIOMETER_WIDTH ADC_BITWIDTH_DEFAULT
 #define POTENTIOMETER_THRESHOLD 2000 // exempelvärde på threshold
 
@@ -30,10 +30,10 @@ void app_main() {
     setOnPressed(&button, button_pressed_callback);
 
     // initialize potentiometer
-    potentio_init(&potentiometer, POTENTIOMETER_GPIO, POTENTIOMETER_UNIT, 0, POTENTIOMETER_ATTEN, POTENTIOMETER_WIDTH);
+    potentio_init(&potentiometer, ADC_CHANNEL_4, ADC_UNIT_1, ADC_ULP_MODE_DISABLE, ADC_ATTEN_DB_12, ADC_BITWIDTH_DEFAULT);
     
     // skapar en FreeRTOS task för threshold monitoring
-    xTaskCreatePinnedToCore(
+    /*xTaskCreatePinnedToCore(
         (void *)potentio_setOnThreshold,
         "Potentiometer Task",
         4096,
@@ -41,13 +41,13 @@ void app_main() {
         1, 
         NULL, 
         tskNO_AFFINITY
-    );
+    );*/
 
 
     while (1) {
         button_update(&button);
         potentio_update(&potentiometer);
-        printf("Potentiometer Value: %d\n", potentio_getValue(&potentiometer));
+        //printf("Potentiometer Value: %d\n", potentio_getValue(&potentiometer));
         vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
