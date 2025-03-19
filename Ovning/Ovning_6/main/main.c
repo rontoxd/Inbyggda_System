@@ -36,7 +36,7 @@ void button_pressed_callback(int pin, int state) {
 
 void potentiometer_threshold_callback() {
     printf("Potentiometer value exceeded threshold!\n");
-}
+}   
 
 void app_main() {
     // initialize button
@@ -46,7 +46,8 @@ void app_main() {
     // initialize potentiometer
     potentio_init(&potentiometer, ADC_CHANNEL_4, ADC_UNIT_1, ADC_ULP_MODE_DISABLE, ADC_ATTEN_DB_12, ADC_BITWIDTH_DEFAULT);
 
-    potentio_setOnThreshold(&potentiometer, 2000, onTh);
+    potentio_setOnThreshold(&potentiometer, 2000, false, onTh);
+
 
     // initialize analog LED
     an_led_init(&led, LED_GPIO, LEDC_TIMER, LEDC_DUTY_RES, LEDC_MODE, LEDC_FREQUENCY, LEDC_CHANNEL);

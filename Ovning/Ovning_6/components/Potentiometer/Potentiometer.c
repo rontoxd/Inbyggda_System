@@ -62,27 +62,37 @@ void potentio_threshold_task(void *arg) {
     potentio_t *potentio = params->potentio;
     int threshold = params->threshold;
     threshold_callback_t callback = params->callback;
+    bool risingEdge = params->risingEdge;
 
-    bool was_above_threshold = false;  // State tracking
+    bool was_above_threshold = potentio->adc_value >= threshold; // Initial state
 
     while (1) {
         potentio_update(potentio);
-        
-        if (potentio->adc_value >= threshold) {
-            if (!was_above_threshold) {  // Trigger callback only on first crossing
-                ESP_LOGI(TAG, "Threshold reached: %d", potentio->adc_value);
-                callback();
-                was_above_threshold = true;  // Mark that we have crossed the threshold
+        int value = potentio->adc_value;
+
+        if (risingEdge) {  // triggas när värdet går från below till above
+            if (value >= threshold && !was_above_threshold) {
+                ESP_LOGI(TAG, "Threshold reached on RISING edge: %d", value);
+                callback(potentio->pin, value);
+                was_above_threshold = true;
+            } else if (value < threshold) {
+                was_above_threshold = false;  // Reset när värdet droppar below
             }
-        } else {
-            was_above_threshold = false;  // Reset state when value goes below threshold
+        } else {  // triggas när värdet går från above till below
+            if (value < threshold && was_above_threshold) {
+                ESP_LOGI(TAG, "Threshold reached on FALLING edge: %d", value);
+                callback(potentio->pin, value);
+                was_above_threshold = false;
+            } else if (value >= threshold) {
+                was_above_threshold = true;  // Reset when value rises above
+            }
         }
 
         vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
 
-void potentio_setOnThreshold(potentio_t *potentio, int threshold, threshold_callback_t callback) {
+void potentio_setOnThreshold(potentio_t *potentio, int threshold, bool risingEdge, threshold_callback_t callback) {
     if (!potentio || !callback) {
         ESP_LOGE(TAG, "Invalid parameters: potentiometer struct or callback is NULL!");
         return;
@@ -97,7 +107,7 @@ void potentio_setOnThreshold(potentio_t *potentio, int threshold, threshold_call
 
     params->potentio = potentio;
     params->threshold = threshold;
+    params->risingEdge = risingEdge;
     params->callback = callback;
-
     xTaskCreate(potentio_threshold_task, "pot_threshold_task", 2048, params, 1, NULL);
 }
