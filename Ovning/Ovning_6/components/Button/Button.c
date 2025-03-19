@@ -3,7 +3,7 @@
 #include "driver/gpio.h"
 #include "esp_timer.h"
 
-#define DEBOUNCE_TIME_US 10000
+#define DEBOUNCE_TIME_US 30000
 
 // initiera knappen
 void button_init(button_t *button, uint8_t pin, uint8_t iomode, bool pulldown, bool pullup){
