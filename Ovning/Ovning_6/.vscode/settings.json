@@ -9,7 +9,7 @@
     "idf.customExtraVars": {
         "IDF_TARGET": "esp32c6"
     },
-    "idf.portWin": "COM8",
+    "idf.portWin": "COM10",
     "idf.flashType": "UART",
     "files.associations": {
         "button.h": "c",
