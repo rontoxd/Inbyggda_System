@@ -26,6 +26,10 @@ button_t button;
 potentio_t potentiometer;
 analog_led led;
 
+void onTh(){
+    printf("th: %d\n", potentio_getValue(&potentiometer));
+}
+
 void button_pressed_callback(int pin, int state) {
     printf("Button pressed! Pin: %d, State: %d\n", pin, state);
 }
@@ -42,13 +46,23 @@ void app_main() {
     // initialize potentiometer
     potentio_init(&potentiometer, ADC_CHANNEL_4, ADC_UNIT_1, ADC_ULP_MODE_DISABLE, ADC_ATTEN_DB_12, ADC_BITWIDTH_DEFAULT);
 
+    potentio_setOnThreshold(&potentiometer, 2000, onTh);
+
     // initialize analog LED
     an_led_init(&led, LED_GPIO, LEDC_TIMER, LEDC_DUTY_RES, LEDC_MODE, LEDC_FREQUENCY, LEDC_CHANNEL);
     an_led_sin(&led);
 
+    printf("Running while\n"); //checking if this code runs
+    int e = 0;
     while (1) {
         button_update(&button);
         potentio_update(&potentiometer);
-        vTaskDelay(pdMS_TO_TICKS(100));
+
+        if (e%30 == 0){
+            int a = potentio_getValue(&potentiometer);
+            printf("pot = %d\n", a);
+        }
+        e++;
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
